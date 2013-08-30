@@ -9,7 +9,7 @@
 
 <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/js/lib/sim-0.26-debug.js"></script>
+<script type="text/javascript" src="js/lib/sim-0.26-debug.js"></script>
 <script src="js/AxonGrowthSimulation.js"></script>
 
 <style>
@@ -28,11 +28,15 @@
             $(event.target).val("cancel");
 
             var mean_sel = parseFloat($('[name="MeanTimeTubuleSelect"]').val());
-			var mean_arrival = parseFloat($('[name="MEAN_ARRIVAL"]').val());
-			var seed = 1234;
-			var simtime = parseFloat($('[name="SIMTIME"]').val());
+			var mean_length = parseFloat($('[name="MeanLengthProtrusion"]').val());
+			var mean_arrival = parseFloat($('[name="MeanTimeProtrusionArrival"]').val());
+			var mean_withdraw = parseFloat($('[name="MeanTimeProtrusionWithdraw"]').val());
+//			var mean_arrival = parseFloat($('[name="MeanLengthProtrusion"]').val());
 
-			var results = AxonGrowthSimulation(10,2, 5, 10, 1234, 120);
+			var seed = 1234;
+			var simtime = parseFloat($('[name="Simtime"]').val());
+
+			var results = AxonGrowthSimulation(mean_length,mean_arrival, mean_withdraw, mean_sel, simtime, seed);
             $("#run_simulation").val("Run Simulation");
        });
     });
@@ -48,18 +52,23 @@
     <h1> Axon Guidance Simulation </h1>
     <form class="form">
         <table class="table table-striped">
-            <tr><td> Mean length of the Tubule (mm):
-                <td><input type="text" name="MeanLengthTubule" value="5"/> </tr>
-            <tr><td> Mean time before a tubule withdraws if not selected (Sec):
-                <td><input type="text" name="MeanTimeTubuleLife" value="5.0"/> </tr>
-            <tr><td> Mean interval before a tubule is picked (Sec):
-                <td><input class="input" type="text" name="MeanTimeTubuleSelect" value="1.0" /> </tr>
-            <tr><td>Simulation time (min):
+            <tr><td> Mean length of the Protrusion (mm):
+                <td><input type="text" name="MeanLengthProtrusion" value="10"/> </tr>
+            <tr><td> Mean time before a new protrusion is created (Sec):
+                <td><input type="text" name="MeanTimeProtrusionArrival" value="2"/> </tr>
+            <tr><td> Mean time for protrusion selection (Sec):
+                <td><input class="input" type="text" name="MeanTimeTubuleSelect" value="10" /> </tr>
+            <tr><td> Mean life time for protrusion (Sec):
+                <td><input class="input" type="text" name="MeanTimeProtrusionWithdraw" value="10" /> </tr>
+            <tr><td>Simulation time (sec):
                 <td><input type="text" name="Simtime" value="240.0"/> </tr>
         </table>
         <input type="button" class="button" value="Run Simulation" id="run_simulation"/>
     </form>
 </div>
+<div id="log" class="row">
+</div>
+
 </div>
 
 </body>

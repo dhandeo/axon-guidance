@@ -64,7 +64,7 @@ function AxonGrowthSimulation(MEAN_PROTRUSION_LENGTH, MEAN_PROTRUSION_CREATION, 
 //    Uncomment to display logging information
     sim.setLogger(function (str) {
         console.log(str);
-        document.write(str);
+        $("#log").append(str + "<br/>");
     });
 
     // simulate for SIMTIME time
