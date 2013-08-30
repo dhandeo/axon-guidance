@@ -24,6 +24,7 @@
     $(document).ready( function () {
 
         $("#run_simulation").click(function(event) {
+            $("#log").html("<br/>");
             console.log("Ready to simulate");
             $(event.target).val("cancel");
 
@@ -33,11 +34,12 @@
 			var mean_withdraw = parseFloat($('[name="MeanTimeProtrusionWithdraw"]').val());
 //			var mean_arrival = parseFloat($('[name="MeanLengthProtrusion"]').val());
 
-			var seed = 1234;
+			var seed = $.now()%2500;
 			var simtime = parseFloat($('[name="Simtime"]').val());
 
 			var results = AxonGrowthSimulation(mean_length,mean_arrival, mean_withdraw, mean_sel, simtime, seed);
             $("#run_simulation").val("Run Simulation");
+
        });
     });
 
@@ -62,6 +64,8 @@
                 <td><input class="input" type="text" name="MeanTimeProtrusionWithdraw" value="10" /> </tr>
             <tr><td>Simulation time (sec):
                 <td><input type="text" name="Simtime" value="240.0"/> </tr>
+            <!--<tr><td>Random seed:-->
+                <!--<td><input type="text" name="Simtime" value="240.0"/> </tr>-->
         </table>
         <input type="button" class="button" value="Run Simulation" id="run_simulation"/>
     </form>
