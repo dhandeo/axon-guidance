@@ -1,0 +1,66 @@
+<!DOCTYPE html> 
+<html>
+
+<head>
+
+<title> Axon guidance simulation </title>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/lib/sim-0.26-debug.js"></script>
+<script src="js/AxonGrowthSimulation.js"></script>
+
+<style>
+
+
+
+</style>
+
+
+<script>
+    // Initialization code
+    $(document).ready( function () {
+
+        $("#run_simulation").click(function(event) {
+            console.log("Ready to simulate");
+            $(event.target).val("cancel");
+
+            var mean_sel = parseFloat($('[name="MeanTimeTubuleSelect"]').val());
+			var mean_arrival = parseFloat($('[name="MEAN_ARRIVAL"]').val());
+			var seed = 1234;
+			var simtime = parseFloat($('[name="SIMTIME"]').val());
+
+			var results = AxonGrowthSimulation(10,2, 5, 10, 1234, 120);
+            $("#run_simulation").val("Run Simulation");
+       });
+    });
+
+</script>
+</head>
+
+<body>
+
+
+<div class="container">
+<div class="row">
+    <h1> Axon Guidance Simulation </h1>
+    <form class="form">
+        <table class="table table-striped">
+            <tr><td> Mean length of the Tubule (mm):
+                <td><input type="text" name="MeanLengthTubule" value="5"/> </tr>
+            <tr><td> Mean time before a tubule withdraws if not selected (Sec):
+                <td><input type="text" name="MeanTimeTubuleLife" value="5.0"/> </tr>
+            <tr><td> Mean interval before a tubule is picked (Sec):
+                <td><input class="input" type="text" name="MeanTimeTubuleSelect" value="1.0" /> </tr>
+            <tr><td>Simulation time (min):
+                <td><input type="text" name="Simtime" value="240.0"/> </tr>
+        </table>
+        <input type="button" class="button" value="Run Simulation" id="run_simulation"/>
+    </form>
+</div>
+</div>
+
+</body>
+</html>
