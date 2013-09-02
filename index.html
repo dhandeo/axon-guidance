@@ -19,6 +19,7 @@
 <!--Load simulation framework-->
 <script type="text/javascript" src="js/lib/sim-0.26-debug.js"></script>
 <script src="js/AxonGrowthSimulation.js"></script>
+<script src="js/AxonGrowthAnimation.js"></script>
 
 <!--Load openlayers framework-->
 <script src="http://cdnjs.cloudflare.com/ajax/libs/openlayers/2.11/OpenLayers.js"></script>
@@ -51,6 +52,8 @@
 			var results = AxonGrowthSimulation(mean_length,mean_arrival, mean_withdraw, mean_sel, simtime, seed);
             $("#run_simulation").val("Run Simulation");
             console.log(results);
+            var vis = new AxonGrowthAnimation({ container : $("#mapcontainer"), log:results});
+
        });
     });
 
@@ -83,13 +86,8 @@
     </div>
 
     <div id="log" class="row" style="height:100px;overflow-y:scroll;"></div>
-    <div id="controls" class="row" >
-        <div id="play" class="btn"></div>
-        <div id="reset" class="btn"></div>
-        <div id="slider"></div>
+    <div id="mapcontainer">
     </div>
-    <div id="map" class="row" ></div>
-
 </div>
 </body>
 </html>
