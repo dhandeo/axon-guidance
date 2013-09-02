@@ -28,48 +28,21 @@ function AxonGrowthSimulation(MEAN_PROTRUSION_LENGTH, MEAN_PROTRUSION_CREATION, 
             this.setTimer(random.random()*MEAN_PROTRUSION_CREATION).done(this.start);
         }
     };
-//    var Traffic = {
-//        start: function () {
-//            this.generateTraffic("North", trafficLights[0]); // traffic for North -> South
-//            this.generateTraffic("South", trafficLights[0]); // traffic for South -> North
-//            this.generateTraffic("East", trafficLights[1]); // traffic for East -> West
-//            this.generateTraffic("West", trafficLights[1]); // traffic for West -> East
-//        },
-//        generateTraffic: function (direction, light) {
-//            // STATS: record that vehicle as entered the intersection
-//            stats.enter(this.time());
-//            sim.log("Arrive for " + direction);
-//
-//            // wait on the light.
-//            // The done() function will be called when the event fires
-//            // (i.e. the light turns green).
-//            this.waitEvent(light).done(function () {
-//                var arrivedAt = this.callbackData;
-//                // STATS: record that vehicle has left the intersection
-//                stats.leave(arrivedAt, this.time());
-//                sim.log("Leave for " + direction + " (arrived at " + arrivedAt.toFixed(6) + ")");
-//            }).setData(this.time());
-//
-//            // Repeat for the next car. Call this function again.
-//            var nextArrivalAt = random.exponential(1.0 / MEAN_ARRIVAL);
-//            this.setTimer(nextArrivalAt).done(this.generateTraffic, this, [direction, light]);
-//        }
-//    };
 
     sim.addEntity(MicroTubuleGrowth );
     sim.addEntity(Protrusion);
+    var results = [];
 
-//    sim.addEntity(Traffic);
-//
-//    Uncomment to display logging information
+    // Display logging information
     sim.setLogger(function (str) {
-//        console.log(str);
+        // console.log(str);
+        results.push(str);
         $("#log").append(str + "<br/>");
     });
 
     // simulate for SIMTIME time
     sim.simulate(SIMTIME);
 
-    return;
+    return results;
 
 }
