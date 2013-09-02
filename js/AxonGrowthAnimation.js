@@ -46,7 +46,27 @@ function AxonGrowthAnimation(config) {
         console.log("Reset clicked");
     });
 
+    // Current point
+    // Start with 0,0
+    this.current_position = new OpenLayers.Geometry.Point(0, 0);
+    // Start going towards positive x axis
+    this.current_angle = 0;
+
     var AddProtrusion = function(angle, length) {
+        // create a line feature from a list of points
+        // Start with current_position
+
+        var newangle = that.current_angle + angle;
+
+        var pointList = [];
+
+        var newPoint = new OpenLayers.Geometry.Point(
+                    that.current_position.x + length * Math.cos(Math.PI * newangle / 180.0),
+                    that.current_position.y + length * Math.sin(Math.PI * newangle / 180.0));
+
+        var lineFeature = new OpenLayers.Feature.Vector(
+            new OpenLayers.Geometry.LineString([that.current_position, newPoint],null,that.style_green));
+        that.vectorLayer.addFeatures(lineFeature);
 
     };
 
@@ -54,7 +74,30 @@ function AxonGrowthAnimation(config) {
 
     var Init = function() {
         // Adds map
-        this.map = new OpenLayers.Map({div: $(that.div).find(".mapdiv")[0]});
+        that.map = new OpenLayers.Map({
+            div: $(that.div).find(".mapdiv")[0],
+            controls:
+                [
+                new OpenLayers.Control.Navigation( // TODO: add options
+                    {
+                    zoomBoxEnabled: true,
+                    dragPanOptions:
+                        {
+                        enableKinetic: true
+                        },
+                    mouseWheelOptions:
+                        {
+                        interval: 100, // TODO: is this a good delay?
+                        cumulative: false
+                        }
+                    }),
+                new OpenLayers.Control.Attribution() //TODO: why, ask DJ?
+                ],
+            maxExtent: new OpenLayers.Bounds(-100,-100, 100, 100),
+            allOverlays: true,
+            //tileSize: new OpenLayers.Size(tileSize, tileSize),
+            cenPx: new OpenLayers.Pixel(0,0)
+            }); // END OpenLayers.Map
 
         // allow testing of specific renderers via "?renderer=Canvas", etc
         var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
@@ -74,11 +117,11 @@ function AxonGrowthAnimation(config) {
         var style_blue = OpenLayers.Util.extend({}, layer_style);
         style_blue.strokeColor = "blue";
         style_blue.fillColor = "blue";
-        style_blue.graphicName = "star";
-        style_blue.pointRadius = 10;
-        style_blue.strokeWidth = 3;
-        style_blue.rotation = 45;
+        //style_blue.graphicName = "star";
+        style_blue.pointRadius = 5;
+        style_blue.strokeWidth = 2;
         style_blue.strokeLinecap = "butt";
+        style_blue.title = "0,0";
 
         /*
          * Green style
@@ -120,44 +163,52 @@ function AxonGrowthAnimation(config) {
         });
 
         // create a point feature
-        var point = new OpenLayers.Geometry.Point(-111.04, 45.68);
+        var point = new OpenLayers.Geometry.Point(0, 0);
         var pointFeature = new OpenLayers.Feature.Vector(point,null,style_blue);
-        var point2 = new OpenLayers.Geometry.Point(-105.04, 49.68);
+        var point2 = new OpenLayers.Geometry.Point(50, 50);
         var pointFeature2 = new OpenLayers.Feature.Vector(point2,null,style_green);
-        var point3 = new OpenLayers.Geometry.Point(-105.04, 49.68);
-        var pointFeature3 = new OpenLayers.Feature.Vector(point3,null,style_mark);
+//        var point3 = new OpenLayers.Geometry.Point(-50, 50);
+//        var pointFeature3 = new OpenLayers.Feature.Vector(point3,null,style_mark);
 
         // create a line feature from a list of points
-        var pointList = [];
-        var newPoint = point;
-        for(var p=0; p<15; ++p) {
-            newPoint = new OpenLayers.Geometry.Point(newPoint.x + Math.random(1),
-                                                     newPoint.y + Math.random(1));
-            pointList.push(newPoint);
-        }
-        var lineFeature = new OpenLayers.Feature.Vector(
-            new OpenLayers.Geometry.LineString(pointList),null,style_green);
+//        var pointList = [];
+//        var newPoint = point;
+//        for(var p=0; p<15; ++p) {
+//            newPoint = new OpenLayers.Geometry.Point(newPoint.x + Math.random(1),
+//                                                     newPoint.y + Math.random(1));
+//            pointList.push(newPoint);
+//        }
+//        var lineFeature = new OpenLayers.Feature.Vector(
+//            new OpenLayers.Geometry.LineString(pointList),null,style_green);
+//
+//        // create a polygon feature from a linear ring of points
+//        var pointList = [];
+//        for(var p=0; p<6; ++p) {
+//            var a = p * (2 * Math.PI) / 7;
+//            var r = Math.random(1) + 1;
+//            var newPoint = new OpenLayers.Geometry.Point(point.x + (r * Math.cos(a)),
+//                                                         point.y + (r * Math.sin(a)));
+//            pointList.push(newPoint);
+//        }
+//        pointList.push(pointList[0]);
 
-        // create a polygon feature from a linear ring of points
-        var pointList = [];
-        for(var p=0; p<6; ++p) {
-            var a = p * (2 * Math.PI) / 7;
-            var r = Math.random(1) + 1;
-            var newPoint = new OpenLayers.Geometry.Point(point.x + (r * Math.cos(a)),
-                                                         point.y + (r * Math.sin(a)));
-            pointList.push(newPoint);
-        }
-        pointList.push(pointList[0]);
-
-        var linearRing = new OpenLayers.Geometry.LinearRing(pointList);
-        var polygonFeature = new OpenLayers.Feature.Vector(
-            new OpenLayers.Geometry.Polygon([linearRing]));
+//        var linearRing = new OpenLayers.Geometry.LinearRing(pointList);
+//        var polygonFeature = new OpenLayers.Feature.Vector(
+//            new OpenLayers.Geometry.Polygon([linearRing]));
 
 
-        map.addLayer(vectorLayer);
-        map.setCenter(new OpenLayers.LonLat(point.x, point.y), 5);
-        vectorLayer.addFeatures([pointFeature, pointFeature3, pointFeature2, lineFeature, polygonFeature])
+        that.map.addLayer(vectorLayer);
+        that.map.setCenter(new OpenLayers.LonLat(point.x, point.y), 5);
+        vectorLayer.addFeatures([pointFeature, pointFeature2])
 
+        that.vectorLayer = vectorLayer;
+        that.style_green = style_blue;
     };
     Init();
+
+    AddProtrusion(0,55);
+    AddProtrusion(90,16);
+    AddProtrusion(45,25);
+
+
 }
