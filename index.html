@@ -1,5 +1,5 @@
 <!DOCTYPE html> 
-<html>
+<html style="height:100%">
 
 <head>
 
@@ -51,7 +51,6 @@
 
 			var results = AxonGrowthSimulation(mean_length,mean_arrival, mean_withdraw, mean_sel, simtime, seed);
             $("#run_simulation").val("Run Simulation");
-            console.log(results);
             var vis = new AxonGrowthAnimation({ container : $("#mapcontainer"), log:results});
 
        });
@@ -61,8 +60,6 @@
 </head>
 
 <body>
-
-
 <div class="container">
     <div class="row">
         <h1> Axon Guidance Simulation </h1>
@@ -83,10 +80,9 @@
             </table>
             <input type="button" class="button" value="Run Simulation" id="run_simulation"/>
         </form>
+        <div id="log" class="row" style="height:100px;overflow-y:scroll;"></div>
     </div>
-
-    <div id="log" class="row" style="height:100px;overflow-y:scroll;"></div>
-    <div id="mapcontainer">
+    <div id="mapcontainer" class="row">
     </div>
 </div>
 </body>

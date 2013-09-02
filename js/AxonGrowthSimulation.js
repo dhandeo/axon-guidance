@@ -8,10 +8,10 @@ function AxonGrowthSimulation(MEAN_PROTRUSION_LENGTH, MEAN_PROTRUSION_CREATION, 
         //currentLight: 0,  // the light that is turned on currently
         start: function () {
             // pick a random number and select the protrusion
-            var sel = random.random();
-
-            sim.log("MicroTubule selects protrusion #" + parseInt(sel*protrusions.length));
-//            sim.log("------------------------------------------");
+            var selected = protrusions[parseInt(random.random()*protrusions.length)];
+            if(selected !== undefined) {
+                sim.log("select_protrusion angle:" + selected[0] + " length:" + selected[1]);
+            }
             protrusions = [];
             // Repeat every GREEN_TIME interval
             this.setTimer(random.random()*MEAN_TUBULE_SELECTION).done(this.start);
@@ -24,7 +24,7 @@ function AxonGrowthSimulation(MEAN_PROTRUSION_LENGTH, MEAN_PROTRUSION_CREATION, 
             var direction = random.normal(0,SPREAD);
             protrusions.push([length, direction]);
             // Repeat every GREEN_TIME interval
-            sim.log("Protrusion created  @" + direction + " and " + length);
+            sim.log("create_protrusion angle:" + direction + " length:" + length);
             this.setTimer(random.random()*MEAN_PROTRUSION_CREATION).done(this.start);
         }
     };
