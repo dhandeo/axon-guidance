@@ -65,13 +65,13 @@ function AxonGrowthAnimation(config) {
         that.timetick = that.timetick + 1;
         var elapsed = that.timetick / that.fps;
         if(elapsed > that.maxtime ) {
-            $(this.div).find(".play").click();
+            $(this.div).find(".reset").click();
             return;
         }
         $(this.div).find(".slider").slider("value", elapsed * 100);
 
         // for each step that needs to be implemented
-        while(this.steps[0].time < elapsed) {
+        while(that.steps[0].time < elapsed) {
             var astep = that.steps.splice(0,1)[0];
             console.log("Executing ..");
             console.log(astep);
@@ -84,8 +84,11 @@ function AxonGrowthAnimation(config) {
                     break;
             }
         }
-        that.map.zoomToExtent(that.vectorLayer.getDataExtent());
+        if(that.vectorLayer.features.length > 0) {
+            that.map.zoomToExtent(that.vectorLayer.getDataExtent());
+        }
     };
+
 
     // Bind events
     $(this.div).find(".play").click(function(event) {
@@ -95,21 +98,37 @@ function AxonGrowthAnimation(config) {
             $(this).text("Play");
             that.playing = false;
         } else {
+            that.playing = true;
             // Play
             // start timer
             that.timer = window.setInterval(function () {
                 that.Tick();
             },1000 / this.fps);
             $(this).text("Pause");
-            that.playing = true;
         }
     });
 
 
     // Bind events
     $(this.div).find(".reset").click(function(event) {
+        if(that.playing) {
+            window.clearInterval(that.timer);
+        }
+
+
         that.timetick = 0;
+        // Current point
+        // Start with 0,0
+        that.current_position = new OpenLayers.Geometry.Point(0, 0);
+        // Start going towards positive x axis
+        that.current_angle = 0;
+
+        that.protrusions = [];
+        that.microtubules = [];
+
         that.vectorLayer.removeAllFeatures();
+
+        that.steps = [];
 
         for(var i=0; i < that.config.log.length; i++) {
             // get words
@@ -126,6 +145,11 @@ function AxonGrowthAnimation(config) {
         }
         //that.map.zoomToExtent(that.vectorLayer.getDataExtent());
         console.log("Reset clicked");
+        if(that.playing) {
+            that.timer = window.setInterval(function () {
+                that.Tick();
+            },1000 / this.fps);
+        }
     });
 
     // Current point
