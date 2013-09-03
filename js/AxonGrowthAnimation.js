@@ -65,7 +65,7 @@ function AxonGrowthAnimation(config) {
         that.timetick = that.timetick + 1;
         var elapsed = that.timetick / that.fps;
         if(elapsed > that.maxtime ) {
-            that.timetick = 0;
+            $(this.div).find(".play").click();
             return;
         }
         $(this.div).find(".slider").slider("value", elapsed * 100);
@@ -84,6 +84,7 @@ function AxonGrowthAnimation(config) {
                     break;
             }
         }
+        that.map.zoomToExtent(that.vectorLayer.getDataExtent());
     };
 
     // Bind events
@@ -107,6 +108,23 @@ function AxonGrowthAnimation(config) {
 
     // Bind events
     $(this.div).find(".reset").click(function(event) {
+        that.timetick = 0;
+        that.vectorLayer.removeAllFeatures();
+
+        for(var i=0; i < that.config.log.length; i++) {
+            // get words
+            var words = that.config.log[i].match(/[^ ]+/g);
+    //        console.log(words);
+            var step = {
+                time : parseFloat(words[0]),
+                type : words[1],
+                angle : parseFloat(words[2].split(":")[1]),
+                length : parseFloat(words[3].split(":")[1])
+                };
+
+            that.steps.push(step);
+        }
+        //that.map.zoomToExtent(that.vectorLayer.getDataExtent());
         console.log("Reset clicked");
     });
 

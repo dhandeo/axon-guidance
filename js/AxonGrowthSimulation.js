@@ -20,9 +20,9 @@ function AxonGrowthSimulation(MEAN_PROTRUSION_LENGTH, MEAN_PROTRUSION_CREATION, 
 
     var Protrusion = {
         start: function () {
-            var length = random.random()*MEAN_PROTRUSION_LENGTH;
+            var length = random.normal(MEAN_PROTRUSION_LENGTH,MEAN_PROTRUSION_LENGTH/3.0);
             var direction = random.normal(0,SPREAD);
-            protrusions.push([length, direction]);
+            protrusions.push([direction, length]);
             // Repeat every GREEN_TIME interval
             sim.log("create_protrusion angle:" + direction + " length:" + length);
             this.setTimer(random.random()*MEAN_PROTRUSION_CREATION).done(this.start);
