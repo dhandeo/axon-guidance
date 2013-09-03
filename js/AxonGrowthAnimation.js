@@ -41,16 +41,49 @@ function AxonGrowthAnimation(config) {
     $(this.div).html(inner_html);
     $(this.div).appendTo($(config.container));
 
-    // Create slider
-    $(this.div).find(".slider").slider();
 
     this.playing = false;
     this.time = 0;
     this.maxtime = this.steps[this.steps.length-1].time;
-    this.rate = 10; // fps
+
+    // Create slider
+    $(this.div).find(".slider").slider({
+      range: "min",
+      value: this.time,
+      min: 0,
+      max: this.maxtime * 100,
+      slide: function( event, ui ) {
+        console.log("Sliding to time " + ui.value / 100);
+      }
+    });
+
+    this.fps = 10; // fps
+    this.timetick = 0;
 
     this.Tick = function() {
-        console.log("tick " + $.now());
+        // console.log("tick " + $.now());
+        that.timetick = that.timetick + 1;
+        var elapsed = that.timetick / that.fps;
+        if(elapsed > that.maxtime ) {
+            that.timetick = 0;
+            return;
+        }
+        $(this.div).find(".slider").slider("value", elapsed * 100);
+
+        // for each step that needs to be implemented
+        while(this.steps[0].time < elapsed) {
+            var astep = that.steps.splice(0,1)[0];
+            console.log("Executing ..");
+            console.log(astep);
+            switch(astep.type) {
+                case "create_protrusion":
+                    that.AddProtrusion(astep.angle, astep.length);
+                    break;
+                case "select_protrusion":
+                    that.SelectProtrusion(astep.angle, astep.length);
+                    break;
+            }
+        }
     };
 
     // Bind events
@@ -65,7 +98,7 @@ function AxonGrowthAnimation(config) {
             // start timer
             that.timer = window.setInterval(function () {
                 that.Tick();
-            },1000 / this.rate);
+            },1000 / this.fps);
             $(this).text("Pause");
             that.playing = true;
         }
@@ -86,7 +119,7 @@ function AxonGrowthAnimation(config) {
     this.protrusions = [];
     this.microtubules = [];
 
-    var AddProtrusion = function(angle, length) {
+    this.AddProtrusion = function(angle, length) {
         // create a line feature from a list of points
         // Start with current_position
 
@@ -108,7 +141,7 @@ function AxonGrowthAnimation(config) {
     };
 
 
-    var SelectProtrusion = function (angle, length) {
+    this.SelectProtrusion = function (angle, length) {
         // that.vectorLayer.destroyFeatures(this.protrusions);
         var newangle = that.current_angle + angle;
         var newPoint = new OpenLayers.Geometry.Point(
@@ -213,13 +246,12 @@ function AxonGrowthAnimation(config) {
     };
     Init();
 
-    AddProtrusion(0,55, that.style_blue);
-    AddProtrusion(90,16, that.style_blue);
-    AddProtrusion(45,25, that.style_green);
-
-    SelectProtrusion(5, 10);
-    SelectProtrusion(5, 10);
-    SelectProtrusion(5, 10);
-
+//    this.AddProtrusion(0,55, that.style_blue);
+//    this.AddProtrusion(90,16, that.style_blue);
+//    this.AddProtrusion(45,25, that.style_green);
+//
+//    this.SelectProtrusion(5, 10);
+//    this.SelectProtrusion(5, 10);
+//    this.SelectProtrusion(5, 10);
 
 }
