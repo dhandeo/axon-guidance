@@ -52,6 +52,10 @@ function AxonGrowthAnimation(config) {
     // Start going towards positive x axis
     this.current_angle = 0;
 
+    var that = this;
+    this.protrusions = [];
+    this.microtubules = [];
+
     var AddProtrusion = function(angle, length) {
         // create a line feature from a list of points
         // Start with current_position
@@ -65,12 +69,35 @@ function AxonGrowthAnimation(config) {
                     that.current_position.y + length * Math.sin(Math.PI * newangle / 180.0));
 
         var lineFeature = new OpenLayers.Feature.Vector(
-            new OpenLayers.Geometry.LineString([that.current_position, newPoint],null,that.style_green));
+            new OpenLayers.Geometry.LineString([that.current_position, newPoint]),null,{
+                'strokeWidth': 2,
+                'strokeColor': 'blue'
+            });
+        that.protrusions.push(lineFeature);
         that.vectorLayer.addFeatures(lineFeature);
-
     };
 
-    var that = this;
+
+    var SelectProtrusion = function (angle, length) {
+        // that.vectorLayer.destroyFeatures(this.protrusions);
+        var newangle = that.current_angle + angle;
+        var newPoint = new OpenLayers.Geometry.Point(
+                    that.current_position.x + length * Math.cos(Math.PI * newangle / 180.0),
+                    that.current_position.y + length * Math.sin(Math.PI * newangle / 180.0));
+
+        var lineFeature = new OpenLayers.Feature.Vector(
+            new OpenLayers.Geometry.LineString([that.current_position, newPoint]),null,{
+                'strokeWidth': 5,
+                'strokeColor': 'red'
+            });
+
+        that.microtubules.push(lineFeature);
+        that.vectorLayer.addFeatures(lineFeature);
+
+        that.current_position = newPoint;
+        that.current_angle = newangle;
+    };
+
 
     var Init = function() {
         // Adds map
@@ -156,7 +183,13 @@ function AxonGrowthAnimation(config) {
     };
     Init();
 
-//    AddProtrusion(0,55);
-//    AddProtrusion(90,16);
-//    AddProtrusion(45,25);
+    AddProtrusion(0,55, that.style_blue);
+    AddProtrusion(90,16, that.style_blue);
+    AddProtrusion(45,25, that.style_green);
+
+    SelectProtrusion(5, 10);
+    SelectProtrusion(5, 10);
+    SelectProtrusion(5, 10);
+
+
 }
