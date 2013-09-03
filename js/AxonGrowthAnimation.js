@@ -3,7 +3,7 @@
 
 function AxonGrowthAnimation(config) {
     this.config = {};
-
+    var that = this;
     $.extend(this.config,{
        log:[],
        container:null
@@ -14,7 +14,15 @@ function AxonGrowthAnimation(config) {
     for(var i=0; i < this.config.log.length; i++) {
         // get words
         var words = this.config.log[i].match(/[^ ]+/g);
-        console.log(words);
+//        console.log(words);
+        var step = {
+            time : parseFloat(words[0]),
+            type : words[1],
+            angle : parseFloat(words[2].split(":")[1]),
+            length : parseFloat(words[3].split(":")[1])
+        };
+
+        this.steps.push(step);
     }
 
     // Start with clean slate
@@ -36,10 +44,33 @@ function AxonGrowthAnimation(config) {
     // Create slider
     $(this.div).find(".slider").slider();
 
+    this.playing = false;
+    this.time = 0;
+    this.maxtime = this.steps[this.steps.length-1].time;
+    this.rate = 10; // fps
+
+    this.Tick = function() {
+        console.log("tick " + $.now());
+    };
+
     // Bind events
     $(this.div).find(".play").click(function(event) {
-        console.log("Play clicked");
+        if(that.playing === true) {
+            // Pause it
+            window.clearInterval(that.timer);
+            $(this).text("Play");
+            that.playing = false;
+        } else {
+            // Play
+            // start timer
+            that.timer = window.setInterval(function () {
+                that.Tick();
+            },1000 / this.rate);
+            $(this).text("Pause");
+            that.playing = true;
+        }
     });
+
 
     // Bind events
     $(this.div).find(".reset").click(function(event) {
@@ -52,7 +83,6 @@ function AxonGrowthAnimation(config) {
     // Start going towards positive x axis
     this.current_angle = 0;
 
-    var that = this;
     this.protrusions = [];
     this.microtubules = [];
 
